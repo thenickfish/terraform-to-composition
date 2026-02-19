@@ -1,0 +1,22 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: {{ .PluralKind }}.{{ .Group }}
+spec:
+  scope: Namespaced
+  group: {{ .Group }}
+  names:
+    kind: {{ .Kind }}
+    plural: {{ .PluralKind }}
+  versions:
+  - name: {{ .Version}}
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+{{ .YamlProperties | indent 14 }}

@@ -1,0 +1,45 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: {{ .Name }}
+spec:
+  compositeTypeRef:
+    apiVersion: {{ .Group }}/{{ .Version }}
+    kind: {{ .Kind }}
+  mode: Pipeline
+  pipeline:
+  - step: patch-and-transform
+    functionRef:
+      name: function-patch-and-transform
+    input:
+      apiVersion: pt.fn.crossplane.io/v1beta1
+      kind: Resources
+      resources:
+      - name: {{ .Name }}
+        base:
+          apiVersion: opentofu.m.upbound.io/v1beta1
+          kind: Workspace
+          # metadata:
+          #   name: example-remote
+          #   annotations:
+          #     crossplane.io/external-name: myworkspace
+          spec:
+            forProvider:
+              source: Remote
+              module: {{ .ModuleSource}}
+              # varmap:
+              #   account:
+              #     region: us-west-1
+              #     owners:
+              #     - example-owner-1
+              #     - example-owner-2
+        patches:
+{{ .PatchesYaml | indent 10 }}
+
+---
+
+  # todo: add support for outputs
+  # All outputs are written to the connection secret.
+  # writeConnectionSecretToRef:
+  #   namespace: default
+  #   name: opentofu-workspace-example-inline
