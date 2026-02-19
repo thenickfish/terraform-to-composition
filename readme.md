@@ -3,6 +3,8 @@ Hack/ POC for generating XRs/XRDs from Terraform modules.
 
 Terraform Module -> JSON Schema -> Go Structs -> go text/template -> XR/XRD YAML using OpenTofu Provider + function-patch-and-transform
 
+`go run main.go generate -p {module_path}`
+
 ### Resources
 - https://github.com/HewlettPackard/terraschema
 - https://docs.crossplane.io/v2.1/guides/function-patch-and-transform/#fromcompositefieldpath

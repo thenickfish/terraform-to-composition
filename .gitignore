@@ -82,3 +82,4 @@ Temporary Items
 
 # End of https://www.toptal.com/developers/gitignore/api/go,visualstudiocode,macos,kdevelop4
 .devbox
+terraform-to-composition
