@@ -26,7 +26,7 @@ func GenerateXr(xrData TemplateData) ([]byte, error) {
 	for key := range xrData.Inputs {
 		patches = append(patches, Patch{
 			Type:          "FromCompositeFieldPath",
-			FromFieldPath: fmt.Sprintf(key),
+			FromFieldPath: fmt.Sprintf("spec.%s", key),
 			ToFieldPath:   fmt.Sprintf("spec.forProvider.varmap.%s", key),
 		})
 	}

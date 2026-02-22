@@ -25,10 +25,10 @@ spec:
               module: https://github.com/thenickfish/crossplane-demo
         patches:
           - type: FromCompositeFieldPath
-            fromFieldPath: bucket_name
+            fromFieldPath: spec.bucket_name
             toFieldPath: spec.forProvider.varmap.bucket_name
           - type: FromCompositeFieldPath
-            fromFieldPath: region
+            fromFieldPath: spec.region
             toFieldPath: spec.forProvider.varmap.region
           - type: ToCompositeFieldPath
             fromFieldPath: status.atProvider.outputs.bucket_name
