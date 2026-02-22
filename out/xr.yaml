@@ -1,0 +1,36 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: bucket
+spec:
+  compositeTypeRef:
+    apiVersion: thenickfish.github.com/v1alpha1
+    kind: XBucket
+  mode: Pipeline
+  pipeline:
+  - step: patch-and-transform
+    functionRef:
+      name: function-patch-and-transform
+    input:
+      apiVersion: pt.fn.crossplane.io/v1beta1
+      kind: Resources
+      resources:
+      - name: bucket
+        base:
+          apiVersion: opentofu.m.upbound.io/v1beta1
+          kind: Workspace
+          spec:
+            forProvider:
+              source: Remote
+              module: https://github.com/thenickfish/crossplane-demo
+        patches:
+          - type: FromCompositeFieldPath
+            fromFieldPath: bucket_name
+            toFieldPath: spec.forProvider.varmap.bucket_name
+          - type: FromCompositeFieldPath
+            fromFieldPath: region
+            toFieldPath: spec.forProvider.varmap.region
+          - type: ToCompositeFieldPath
+            fromFieldPath: status.atProvider.outputs.bucket_name
+            toFieldPath: status.bucket_name
+          

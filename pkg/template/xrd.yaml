@@ -20,3 +20,7 @@ spec:
             type: object
             properties:
 {{ .YamlProperties | indent 14 }}
+          status:
+            type: object
+            properties:
+{{ .StatusProperties | indent 14 }}

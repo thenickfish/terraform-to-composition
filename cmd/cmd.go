@@ -1,14 +1,12 @@
 package cmd
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
-	"github.com/HewlettPackard/terraschema/pkg/jsonschema"
 	pluralize "github.com/gertd/go-pluralize"
+	"github.com/nickfish/terraform-to-composition/pkg/hclparser"
 	t "github.com/nickfish/terraform-to-composition/pkg/template"
 )
 
@@ -40,36 +38,38 @@ func Execute() error {
 
 func generateSchema(xrdName string) {
 
-	// Create a new schema
-	options := jsonschema.CreateSchemaOptions{}
-	schema, _ := jsonschema.CreateSchema(modulePath, options)
-
-	buffer := &bytes.Buffer{}
-	encoder := json.NewEncoder(buffer)
-
-	err := encoder.Encode(schema)
+	inputs, outputs, err := hclparser.ParseModule(modulePath)
 	if err != nil {
-		fmt.Printf("Error encoding schema to JSON: %v\n", err)
-	}
-
-	propertiesMap, ok := schema["properties"].(map[string]interface{})
-	if !ok {
-		propertiesMap = map[string]interface{}{}
+		panic(err)
 	}
 
 	templateData := t.TemplateData{
-		Name:         "xrdname",
-		ModuleSource: "https://github.com/test",
+		Name:         "bucket",
+		ModuleSource: "https://github.com/thenickfish/crossplane-demo",
 		Group:        "thenickfish.github.com",
 		Version:      "v1alpha1",
-		Kind:         "XMyDatabase",
-		PluralKind:   pluralize.NewClient().Plural("xmydatabase"),
-		Properties:   propertiesMap,
+		Kind:         "XBucket",
+		PluralKind:   pluralize.NewClient().Plural("xbucket"),
+		Inputs:       inputs,
+		Outputs:      outputs,
 	}
 
-	text, _ := t.GenerateXrd(templateData)
-	fmt.Println(text)
+	data, err := t.GenerateXrd(templateData)
+	if err != nil {
+		panic(err)
+	}
+	err = os.WriteFile("out/xrd.yaml", data, 0644)
+	if err != nil {
+		panic(err)
+	}
 
-	text, _ = t.GenerateXr(templateData)
-	fmt.Println(text)
+	data, err = t.GenerateXr(templateData)
+	if err != nil {
+		panic(err)
+	}
+	err = os.WriteFile("out/xr.yaml", data, 0644)
+	if err != nil {
+		panic(err)
+	}
+
 }

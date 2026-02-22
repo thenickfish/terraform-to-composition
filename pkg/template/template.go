@@ -1,5 +1,9 @@
 package pkg
 
+import (
+	"github.com/nickfish/terraform-to-composition/pkg/hclparser"
+)
+
 type TemplateData struct {
 	Name         string
 	ModuleSource string
@@ -8,5 +12,6 @@ type TemplateData struct {
 	Version      string
 	Kind         string
 	PluralKind   string
-	Properties   map[string]interface{}
+	Inputs       map[string]interface{}
+	Outputs      []hclparser.Output
 }
